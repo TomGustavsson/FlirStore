@@ -1,6 +1,8 @@
 package com.flir.earhart.flirstore.composables
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -13,14 +15,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import com.flir.earhart.flirstore.FlirStoreViewModel
 import com.flir.earhart.flirstore.R
+import com.flir.earhart.flirstore.models.AppInfo
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
-fun AppListScreen() {
+fun AppListScreen(viewModel: FlirStoreViewModel) {
+
     Scaffold(
         backgroundColor = MaterialTheme.colors.primary,
         topBar = {
@@ -34,8 +41,8 @@ fun AppListScreen() {
             }
         }) { padding ->
         LazyColumn(modifier = Modifier.padding(padding),content = {
-            items(listOf("", "", "")) {
-                AppRow()
+            items(viewModel.apps) {
+                AppRow(it)
                 Divider(color = MaterialTheme.colors.onSecondary)
             }
         })
@@ -43,12 +50,12 @@ fun AppListScreen() {
 }
 
 @Composable
-fun AppRow() {
+fun AppRow(appInfo: AppInfo) {
     ConstraintLayout(modifier = Modifier.fillMaxWidth()) {
         val (image, texts, button) = createRefs()
 
         Image(
-            painter = painterResource(id = R.drawable.ignite_gradient),
+            bitmap = appInfo.icon.asImageBitmap(),
             contentDescription = null,
             modifier = Modifier
                 .size(60.dp)
@@ -64,7 +71,7 @@ fun AppRow() {
             bottom.linkTo(parent.bottom)
             start.linkTo(image.end, 16.dp)
         }) {
-            Text(text = "Settings app", style = MaterialTheme.typography.h1)
+            Text(text = appInfo.name, style = MaterialTheme.typography.h1)
             Spacer(modifier = Modifier.height(4.dp))
             Text(text = "Version 20.0.5", style = MaterialTheme.typography.h2)
         }
