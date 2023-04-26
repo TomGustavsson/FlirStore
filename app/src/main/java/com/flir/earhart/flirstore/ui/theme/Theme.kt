@@ -80,7 +80,6 @@ fun FlirStoreTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composa
     MaterialTheme(
         colors = colors,
         typography = flirTypography,
-        shapes = Shapes,
         content = content
     )
 }

@@ -62,5 +62,8 @@ dependencies {
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"
 
     implementation "androidx.constraintlayout:constraintlayout-compose:1.0.1"
-    implementation "io.insert-koin:koin-androidx-compose:3.4.0"
+    implementation "io.insert-koin:koin-androidx-compose:3.2.0"
+    implementation "androidx.work:work-runtime:2.8.0-alpha03"
+    implementation "androidx.work:work-runtime-ktx:2.8.0-alpha03"
+    implementation "io.insert-koin:koin-androidx-workmanager:3.2.1"
 }

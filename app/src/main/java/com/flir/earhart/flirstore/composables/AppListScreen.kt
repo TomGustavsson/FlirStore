@@ -20,7 +20,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
-import com.flir.earhart.flirstore.FlirStoreViewModel
+import com.flir.earhart.flirstore.viewmodel.FlirStoreViewModel
 import com.flir.earhart.flirstore.R
 import com.flir.earhart.flirstore.models.AppInfo
 
@@ -42,7 +42,7 @@ fun AppListScreen(viewModel: FlirStoreViewModel) {
         }) { padding ->
         LazyColumn(modifier = Modifier.padding(padding),content = {
             items(viewModel.apps) {
-                AppRow(it)
+                AppRow(it, viewModel.appsAddedToDownload.contains(it.packageName))
                 Divider(color = MaterialTheme.colors.onSecondary)
             }
         })
@@ -50,7 +50,7 @@ fun AppListScreen(viewModel: FlirStoreViewModel) {
 }
 
 @Composable
-fun AppRow(appInfo: AppInfo) {
+fun AppRow(appInfo: AppInfo, queued: Boolean) {
     ConstraintLayout(modifier = Modifier.fillMaxWidth()) {
         val (image, texts, button) = createRefs()
 
@@ -86,12 +86,12 @@ fun AppRow(appInfo: AppInfo) {
                 }
                 .background(color = MaterialTheme.colors.onPrimary, RoundedCornerShape(6.dp))
                 .clickable {
-                    Log.d("tgiw", "update.")
+                    appInfo.onClick.invoke(appInfo)
                 }
                 .padding(12.dp)
         ) {
             Text(
-                text = "Download",
+                text = if(queued) "Cancel" else "Download",
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.button,
                 color = MaterialTheme.colors.primary

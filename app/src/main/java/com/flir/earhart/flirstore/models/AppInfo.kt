@@ -9,3 +9,8 @@ data class AppInfo(
     val versionNum: String,
     val onClick: (AppInfo) -> Unit
 )
+
+enum class InstallType {
+    UPDATE,
+    INSTALLATION
+}

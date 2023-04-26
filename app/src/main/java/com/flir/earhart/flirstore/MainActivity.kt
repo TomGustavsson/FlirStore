@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.flir.earhart.flirstore.composables.AppListScreen
 import com.flir.earhart.flirstore.ui.theme.FlirStoreTheme
+import com.flir.earhart.flirstore.viewmodel.FlirStoreViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
