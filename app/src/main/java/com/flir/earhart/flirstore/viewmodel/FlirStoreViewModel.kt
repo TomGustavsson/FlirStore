@@ -22,43 +22,43 @@ class FlirStoreViewModel(
     private val application: Application,
     private val repository: FlirStoreRepository
 ): ViewModel() {
-
-    val apps = mutableStateListOf<AppInfo>()
-
     /** PackageName */
     val appsAddedToDownload = mutableStateListOf<String>()
+
+    val availableApks = mutableStateListOf<AppInfo>()
     init {
-        apps.clear()
+        val intent = Intent(Intent.ACTION_MAIN, null)
+        intent.addCategory(Intent.CATEGORY_LAUNCHER)
+        val pm = application.packageManager
+
+        viewModelScope.launch {
+            val installedApks = repository.queryIntentActivities(pm, intent)
+
+            repository.getApkList().map { apk ->
+
+                val alreadyInstalled = installedApks.firstOrNull { it.activityInfo.name == apk.name }
+
+                availableApks.add(
+                    AppInfo(
+                        name = apk.name,
+                        downloadUrl = apk.url,
+                        alreadyInstalled = alreadyInstalled != null,
+                        icon = alreadyInstalled?.activityInfo?.loadIcon(pm)?.toBitmap(),
+                        packageName = alreadyInstalled?.activityInfo?.packageName,
+                        versionNum = "Version 20.0.5",
+                        onClick = {
+
+                        }
+                  )
+              )
+            }
+        }
 
         viewModelScope.launch {
             repository.downloadFlow().collect {
                 appsAddedToDownload.clear()
                 appsAddedToDownload.addAll(it)
             }
-        }
-
-        val intent = Intent(Intent.ACTION_MAIN, null)
-        intent.addCategory(Intent.CATEGORY_LAUNCHER)
-        val pm = application.packageManager
-
-        repository.queryIntentActivities(pm, intent).forEach { resolveInfo ->
-
-            val appInfo = AppInfo(
-                name = resolveInfo.loadLabel(pm).toString(),
-                icon = resolveInfo.activityInfo.loadIcon(pm).toBitmap(),
-                packageName = resolveInfo.activityInfo.packageName,
-                versionNum = "",
-                onClick = {
-                    CoroutineScope(Dispatchers.IO).launch {
-                        if(appsAddedToDownload.contains(it.packageName)){
-                            repository.cancelDownload(it.packageName, InstallType.INSTALLATION)
-                        } else {
-                            repository.startDownload(it.packageName, InstallType.INSTALLATION)
-                        }
-                    }
-                }
-            )
-            apps.add(appInfo)
         }
     }
 }

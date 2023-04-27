@@ -4,9 +4,11 @@ import android.graphics.Bitmap
 
 data class AppInfo(
     val name: String,
-    val icon: Bitmap,
-    val packageName: String,
-    val versionNum: String,
+    val downloadUrl: String,
+    val alreadyInstalled: Boolean,
+    val icon: Bitmap? = null,
+    val packageName: String? = null,
+    val versionNum: String? = null,
     val onClick: (AppInfo) -> Unit
 )
 

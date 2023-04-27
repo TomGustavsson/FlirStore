@@ -7,6 +7,8 @@ import android.content.pm.ResolveInfo
 import android.os.Build
 import android.util.Log
 import androidx.work.*
+import com.flir.earhart.flirstore.DownloadApi
+import com.flir.earhart.flirstore.models.ApkInfo
 import com.flir.earhart.flirstore.models.InstallType
 import com.flir.earhart.flirstore.service.CacheService
 import com.flir.earhart.flirstore.worker.UpdateInstallWorker
@@ -16,8 +18,13 @@ import java.util.concurrent.TimeUnit
 
 class FlirStoreRepository(
     private val application: Application,
-    private val cache: CacheService
+    private val cache: CacheService,
+    private val api: DownloadApi,
 ) {
+
+    suspend fun getApkList(): List<ApkInfo> {
+        return api.getApkList()
+    }
 
     @Suppress("DEPRECATION")
     fun queryIntentActivities(pm: PackageManager, intent: Intent): List<ResolveInfo> {

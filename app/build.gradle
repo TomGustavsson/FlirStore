@@ -66,4 +66,11 @@ dependencies {
     implementation "androidx.work:work-runtime:2.8.0-alpha03"
     implementation "androidx.work:work-runtime-ktx:2.8.0-alpha03"
     implementation "io.insert-koin:koin-androidx-workmanager:3.2.1"
+
+    implementation "com.squareup.retrofit2:converter-moshi:2.9.0"
+    implementation "com.squareup.okhttp3:okhttp:5.0.0-alpha.2"
+
+    implementation "com.squareup.retrofit2:retrofit:2.9.0"
+
+    implementation "com.squareup.moshi:moshi-kotlin:1.14.0"
 }

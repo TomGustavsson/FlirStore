@@ -1,7 +1,6 @@
 package com.flir.earhart.flirstore.composables
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -20,9 +19,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
-import com.flir.earhart.flirstore.viewmodel.FlirStoreViewModel
 import com.flir.earhart.flirstore.R
 import com.flir.earhart.flirstore.models.AppInfo
+import com.flir.earhart.flirstore.viewmodel.FlirStoreViewModel
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
@@ -41,7 +40,7 @@ fun AppListScreen(viewModel: FlirStoreViewModel) {
             }
         }) { padding ->
         LazyColumn(modifier = Modifier.padding(padding),content = {
-            items(viewModel.apps) {
+            items(viewModel.availableApks) {
                 AppRow(it, viewModel.appsAddedToDownload.contains(it.packageName))
                 Divider(color = MaterialTheme.colors.onSecondary)
             }
@@ -51,20 +50,21 @@ fun AppListScreen(viewModel: FlirStoreViewModel) {
 
 @Composable
 fun AppRow(appInfo: AppInfo, queued: Boolean) {
-    ConstraintLayout(modifier = Modifier.fillMaxWidth()) {
+    ConstraintLayout(modifier = Modifier.fillMaxWidth().padding(top = 12.dp, bottom = 12.dp, start = 16.dp, end = 16.dp)) {
         val (image, texts, button) = createRefs()
-
-        Image(
-            bitmap = appInfo.icon.asImageBitmap(),
-            contentDescription = null,
-            modifier = Modifier
-                .size(60.dp)
-                .constrainAs(image) {
-                    start.linkTo(parent.start, 12.dp)
-                    top.linkTo(parent.top, 12.dp)
-                    bottom.linkTo(parent.bottom, 12.dp)
-                }
-        )
+        appInfo.icon?.let {
+            Image(
+                bitmap = it.asImageBitmap(),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(60.dp)
+                    .constrainAs(image) {
+                        start.linkTo(parent.start)
+                        top.linkTo(parent.top)
+                        bottom.linkTo(parent.bottom)
+                    }
+            )
+        }
 
         Column(Modifier.constrainAs(texts){
             top.linkTo(parent.top)
@@ -81,17 +81,19 @@ fun AppRow(appInfo: AppInfo, queued: Boolean) {
             modifier = Modifier
                 .constrainAs(button) {
                     top.linkTo(parent.top)
-                    end.linkTo(parent.end, 12.dp)
+                    end.linkTo(parent.end)
                     bottom.linkTo(parent.bottom)
                 }
                 .background(color = MaterialTheme.colors.onPrimary, RoundedCornerShape(6.dp))
                 .clickable {
-                    appInfo.onClick.invoke(appInfo)
+                    if(!appInfo.alreadyInstalled) {
+                        appInfo.onClick.invoke(appInfo)
+                    }
                 }
                 .padding(12.dp)
         ) {
             Text(
-                text = if(queued) "Cancel" else "Download",
+                text = if(appInfo.alreadyInstalled) "Installed" else if (queued) "Cancel" else "Download",
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.button,
                 color = MaterialTheme.colors.primary
