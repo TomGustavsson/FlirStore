@@ -43,11 +43,11 @@ class FlirStoreRepository(
     suspend fun downloadFlow(): Flow<List<String>> = cache.downloadFlow()
 
     suspend fun startDownload(
-        packageName: String,
+        apkName: String,
         type: InstallType
     ) {
-        Log.d(TAG, "Added to download queue: $packageName")
-        cache.saveDownload(packageName, type)
+        Log.d(TAG, "Added to download queue: $apkName")
+        cache.saveDownload(apkName, type)
 
         val work = OneTimeWorkRequest.Builder(UpdateInstallWorker::class.java)
             .setConstraints(

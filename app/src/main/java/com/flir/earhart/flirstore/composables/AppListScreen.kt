@@ -25,7 +25,7 @@ import com.flir.earhart.flirstore.viewmodel.FlirStoreViewModel
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
-fun AppListScreen(viewModel: FlirStoreViewModel) {
+fun AppListScreen(viewModel: FlirStoreViewModel, clickCallback: (AppInfo) -> Unit) {
 
     Scaffold(
         backgroundColor = MaterialTheme.colors.primary,
@@ -41,7 +41,9 @@ fun AppListScreen(viewModel: FlirStoreViewModel) {
         }) { padding ->
         LazyColumn(modifier = Modifier.padding(padding),content = {
             items(viewModel.availableApks) {
-                AppRow(it, viewModel.appsAddedToDownload.contains(it.packageName))
+                AppRow(it, viewModel.appsAddedToDownload.contains(it.packageName)) {
+                    clickCallback.invoke(it)
+                }
                 Divider(color = MaterialTheme.colors.onSecondary)
             }
         })
@@ -49,7 +51,7 @@ fun AppListScreen(viewModel: FlirStoreViewModel) {
 }
 
 @Composable
-fun AppRow(appInfo: AppInfo, queued: Boolean) {
+fun AppRow(appInfo: AppInfo, queued: Boolean, clickCallback: (AppInfo) -> Unit) {
     ConstraintLayout(modifier = Modifier.fillMaxWidth().padding(top = 12.dp, bottom = 12.dp, start = 16.dp, end = 16.dp)) {
         val (image, texts, button) = createRefs()
         appInfo.icon?.let {
@@ -86,9 +88,10 @@ fun AppRow(appInfo: AppInfo, queued: Boolean) {
                 }
                 .background(color = MaterialTheme.colors.onPrimary, RoundedCornerShape(6.dp))
                 .clickable {
-                    if(!appInfo.alreadyInstalled) {
+                    clickCallback.invoke(appInfo)
+                   /* if(!appInfo.alreadyInstalled) {
                         appInfo.onClick.invoke(appInfo)
-                    }
+                    }*/
                 }
                 .padding(12.dp)
         ) {

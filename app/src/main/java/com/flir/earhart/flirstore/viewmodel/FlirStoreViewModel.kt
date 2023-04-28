@@ -47,7 +47,9 @@ class FlirStoreViewModel(
                         packageName = alreadyInstalled?.activityInfo?.packageName,
                         versionNum = "Version 20.0.5",
                         onClick = {
-
+                            /* viewModelScope.launch {
+                                repository.startDownload(apk.name, InstallType.INSTALLATION)
+                            } */
                         }
                   )
               )

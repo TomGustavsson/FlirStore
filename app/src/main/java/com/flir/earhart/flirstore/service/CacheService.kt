@@ -48,7 +48,7 @@ class CacheService(private val context: Context) {
         }
     }
 
-    private suspend fun getDownloads(type: InstallType): Set<String> {
+    suspend fun getDownloads(type: InstallType): Set<String> {
         //Return either the ones queued for install or update
         val sharedPref = context.getSharedPreferences(DEFAULT_GROUP_KEY, Context.MODE_PRIVATE)
         return sharedPref.getStringSet(type.toString(), null) ?: emptySet()
