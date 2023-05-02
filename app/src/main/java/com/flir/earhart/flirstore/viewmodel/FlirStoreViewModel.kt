@@ -3,7 +3,6 @@ package com.flir.earhart.flirstore.viewmodel
 import android.app.Application
 import android.content.*
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.mutableStateListOf
 import androidx.core.graphics.drawable.toBitmap
@@ -32,9 +31,9 @@ class FlirStoreViewModel(
             val installedApks = repository.queryIntentActivities(pm, intent)
             repository.getApkList().map { apk ->
                 /** Will always fail.. need more information in API call (apps name) */
-                val alreadyInstalled = installedApks.firstOrNull { it.activityInfo.name == apk.name }
 
-                Log.d("tgiw", alreadyInstalled.toString())
+                val alreadyInstalled = installedApks.firstOrNull { it.activityInfo.packageName== apk.name.removeSuffix(".apk") }
+
                 availableApks.add(
                     AppInfo(
                         name = apk.name,
