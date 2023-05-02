@@ -8,8 +8,7 @@ data class AppInfo(
     val alreadyInstalled: Boolean,
     val icon: Bitmap? = null,
     val packageName: String? = null,
-    val versionNum: String? = null,
-    val onClick: (AppInfo) -> Unit
+    val versionNum: String? = null
 )
 
 enum class InstallType {

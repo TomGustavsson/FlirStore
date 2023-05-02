@@ -1,25 +1,22 @@
 package com.flir.earhart.flirstore.viewmodel
 
 import android.app.Application
-import android.content.Intent
+import android.content.*
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.flir.earhart.flirstore.repositories.FlirStoreRepository
 import com.flir.earhart.flirstore.models.AppInfo
-import com.flir.earhart.flirstore.models.InstallType
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import com.flir.earhart.flirstore.repositories.FlirStoreRepository
 import kotlinx.coroutines.launch
+
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 class FlirStoreViewModel(
-    private val application: Application,
+    application: Application,
     private val repository: FlirStoreRepository
 ): ViewModel() {
     /** PackageName */
@@ -33,11 +30,11 @@ class FlirStoreViewModel(
 
         viewModelScope.launch {
             val installedApks = repository.queryIntentActivities(pm, intent)
-
             repository.getApkList().map { apk ->
-
+                /** Will always fail.. need more information in API call (apps name) */
                 val alreadyInstalled = installedApks.firstOrNull { it.activityInfo.name == apk.name }
 
+                Log.d("tgiw", alreadyInstalled.toString())
                 availableApks.add(
                     AppInfo(
                         name = apk.name,
@@ -45,12 +42,7 @@ class FlirStoreViewModel(
                         alreadyInstalled = alreadyInstalled != null,
                         icon = alreadyInstalled?.activityInfo?.loadIcon(pm)?.toBitmap(),
                         packageName = alreadyInstalled?.activityInfo?.packageName,
-                        versionNum = "Version 20.0.5",
-                        onClick = {
-                            /* viewModelScope.launch {
-                                repository.startDownload(apk.name, InstallType.INSTALLATION)
-                            } */
-                        }
+                        versionNum = "Version 20.0.5" //Version check is not supported yet.
                   )
               )
             }

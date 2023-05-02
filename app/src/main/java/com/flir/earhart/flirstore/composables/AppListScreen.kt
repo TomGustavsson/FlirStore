@@ -41,7 +41,7 @@ fun AppListScreen(viewModel: FlirStoreViewModel, clickCallback: (AppInfo) -> Uni
         }) { padding ->
         LazyColumn(modifier = Modifier.padding(padding),content = {
             items(viewModel.availableApks) {
-                AppRow(it, viewModel.appsAddedToDownload.contains(it.packageName)) {
+                AppRow(it) {
                     clickCallback.invoke(it)
                 }
                 Divider(color = MaterialTheme.colors.onSecondary)
@@ -51,7 +51,7 @@ fun AppListScreen(viewModel: FlirStoreViewModel, clickCallback: (AppInfo) -> Uni
 }
 
 @Composable
-fun AppRow(appInfo: AppInfo, queued: Boolean, clickCallback: (AppInfo) -> Unit) {
+fun AppRow(appInfo: AppInfo, clickCallback: (AppInfo) -> Unit) {
     ConstraintLayout(modifier = Modifier.fillMaxWidth().padding(top = 12.dp, bottom = 12.dp, start = 16.dp, end = 16.dp)) {
         val (image, texts, button) = createRefs()
         appInfo.icon?.let {
@@ -89,14 +89,11 @@ fun AppRow(appInfo: AppInfo, queued: Boolean, clickCallback: (AppInfo) -> Unit) 
                 .background(color = MaterialTheme.colors.onPrimary, RoundedCornerShape(6.dp))
                 .clickable {
                     clickCallback.invoke(appInfo)
-                   /* if(!appInfo.alreadyInstalled) {
-                        appInfo.onClick.invoke(appInfo)
-                    }*/
                 }
                 .padding(12.dp)
         ) {
             Text(
-                text = if(appInfo.alreadyInstalled) "Installed" else if (queued) "Cancel" else "Download",
+                text = if(appInfo.alreadyInstalled) "Update" else "Download",
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.button,
                 color = MaterialTheme.colors.primary
