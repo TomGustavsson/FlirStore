@@ -49,9 +49,8 @@ val flirTypography = Typography(
     h1 = TextStyle(
         fontFamily = FontFamily(Font(R.font.fui_industry_medium)),
         fontWeight = FontWeight.Normal,
-        fontSize = 20.sp,
-        letterSpacing = 0.sp,
-        lineHeight = 52.sp
+        fontSize = 18.sp,
+        letterSpacing = 0.sp
     ),
     h2 = TextStyle(
         fontFamily = FontFamily(Font(R.font.fui_industry_medium)),

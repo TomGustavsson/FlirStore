@@ -17,8 +17,10 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import com.flir.earhart.flirstore.R
 import com.flir.earhart.flirstore.models.AppInfo
 import com.flir.earhart.flirstore.viewmodel.FlirStoreViewModel
@@ -41,7 +43,7 @@ fun AppListScreen(viewModel: FlirStoreViewModel, clickCallback: (AppInfo) -> Uni
         }) { padding ->
         LazyColumn(modifier = Modifier.padding(padding),content = {
             items(viewModel.availableApks) {
-                AppRow(it) {
+                AppRow(it, viewModel.queuedDownloads.contains(it.apkName)) {
                     clickCallback.invoke(it)
                 }
                 Divider(color = MaterialTheme.colors.onSecondary)
@@ -51,7 +53,7 @@ fun AppListScreen(viewModel: FlirStoreViewModel, clickCallback: (AppInfo) -> Uni
 }
 
 @Composable
-fun AppRow(appInfo: AppInfo, clickCallback: (AppInfo) -> Unit) {
+fun AppRow(appInfo: AppInfo, loading: Boolean, clickCallback: (AppInfo) -> Unit) {
     ConstraintLayout(modifier = Modifier.fillMaxWidth().padding(top = 12.dp, bottom = 12.dp, start = 16.dp, end = 16.dp)) {
         val (image, texts, button) = createRefs()
         appInfo.icon?.let {
@@ -71,11 +73,17 @@ fun AppRow(appInfo: AppInfo, clickCallback: (AppInfo) -> Unit) {
         Column(Modifier.constrainAs(texts){
             top.linkTo(parent.top)
             bottom.linkTo(parent.bottom)
-            start.linkTo(image.end, 16.dp)
-        }) {
-            Text(text = appInfo.name, style = MaterialTheme.typography.h1)
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(text = "Version 20.0.5", style = MaterialTheme.typography.h2)
+            start.linkTo(if(appInfo.icon != null) image.end else parent.start, 16.dp)
+            end.linkTo(button.start, 16.dp)
+            width = Dimension.fillToConstraints
+        }
+
+        ) {
+            Text(text = appInfo.name ?: appInfo.apkName, style = MaterialTheme.typography.h1, maxLines = 2, overflow = TextOverflow.Ellipsis)
+            appInfo.versionNum?.let {
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(text = it, style = MaterialTheme.typography.h2, maxLines = 2, overflow = TextOverflow.Ellipsis)
+            }
         }
 
         Box(
@@ -86,14 +94,14 @@ fun AppRow(appInfo: AppInfo, clickCallback: (AppInfo) -> Unit) {
                     end.linkTo(parent.end)
                     bottom.linkTo(parent.bottom)
                 }
-                .background(color = MaterialTheme.colors.onPrimary, RoundedCornerShape(6.dp))
+                .background(color = if(loading) MaterialTheme.colors.onSecondary else MaterialTheme.colors.onPrimary, RoundedCornerShape(6.dp))
                 .clickable {
                     clickCallback.invoke(appInfo)
                 }
                 .padding(12.dp)
         ) {
             Text(
-                text = if(appInfo.alreadyInstalled) "Update" else "Download",
+                text = if(loading) "Cancel" else if(appInfo.alreadyInstalled) "Update" else "Download",
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.button,
                 color = MaterialTheme.colors.primary
